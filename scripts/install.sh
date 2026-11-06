@@ -56,9 +56,12 @@ else
         --branch "$REPOSITORY_REF" \
         "$REPOSITORY_URL" \
         "$APP_DIR"
-    git -C "$APP_DIR" sparse-checkout set \
-        src pyproject.toml uv.lock README.md .python-version
 fi
+
+# Cone mode includes all root-level files (including pyproject.toml and
+# uv.lock) and the complete src tree. Keep this outside the clone branch so
+# rerunning after an interrupted install also repairs the sparse checkout.
+git -C "$APP_DIR" sparse-checkout set src
 
 cd "$APP_DIR"
 UV_PYTHON_DOWNLOADS=automatic "$UV_BIN" sync --frozen --no-dev
@@ -88,7 +91,7 @@ else
     printf 'AWG_DASHBOARD_API_TOKEN=%s\n' "$api_token" >>"$ENV_FILE"
     echo "Generated a new API bearer token. It is stored in $ENV_FILE."
 fi
-ensure_setting AWG_DASHBOARD_HOST "127.0.0.1"
+ensure_setting AWG_DASHBOARD_HOST "0.0.0.0"
 ensure_setting AWG_DASHBOARD_PORT "8000"
 
 cat >"$SERVICE_FILE" <<UNIT
@@ -125,7 +128,7 @@ systemctl enable awg-dashboard-api.service
 systemctl restart awg-dashboard-api.service
 
 echo
-echo "AWG Dashboard API is running at http://127.0.0.1:8000"
+echo "AWG Dashboard API is running at http://0.0.0.0:8000"
 echo "API token is stored in: $ENV_FILE (root-readable only)"
 echo "Check: systemctl status awg-dashboard-api.service"
 echo "Logs:  journalctl -u awg-dashboard-api.service -f"
