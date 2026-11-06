@@ -1,4 +1,12 @@
-# AWG Dashboard mechanisms
+# AWG Dashboard
+
+**Currently, only the API is implemented. The frontend will be added later.**
+
+TODO:
+- Clean up and refactor the code.
+- Containerize the service.
+- Implement the frontend.
+- Add automatic email delivery of client configurations whenever the server is updated.
 
 This project contains a FastAPI service and Python mechanisms for managing an
 AmneziaWG server through the local Docker Engine. It does not include a UI or a
